@@ -1,40 +1,48 @@
-function initMyScroller(n, t) {
-    function r(n, t) {
-      n.forEach(n => {
-        if (n.setAttribute("data-animated", !0), t && t.speed) {
-          const i = t.speed;
-          n.style.setProperty("--_animation-duration", i + "s")
-        }
-        if (t && t.direction) {
-          const i = t.direction,
-                r = i === "right" ? "reverse" : "forwards";
-          n.style.setProperty("--_animation-direction", r)
-        }
-        if (t && t.columnGap) {
-          const i = t.columnGap;
-          n.querySelector(".scroller-wrapper").style.gridColumnGap = i + "rem";
-          const r = `calc(-50% - ${i / 2}rem)`;
-          n.style.setProperty("--_translation-value", r)
-        }
-        let i = 1;
-        t && t.duplicates && t.duplicates > 0 && (i = t.duplicates);
-        const r = n.querySelector(".scroller-wrapper"),
-              u = Array.from(r.children),
-              f = u.slice();
-        for (let n = 0; n < i; n++) f.forEach(n => {
-          const t = n.cloneNode(!0);
-          t.setAttribute("aria-hidden", !0);
-          r.appendChild(t);
-  
-          if (t.tagName === "VIDEO") {
-            t.onloadeddata = function() {
-              t.play();
-            };
-          }
-        })
-      })
-    }
-    const i = document.querySelectorAll(n);
-    //window.matchMedia("(prefers-reduced-motion: reduce)").matches || r(i, t)
-     r(i, t)
+function initMyScroller(selector, options) {
+  const scrollers = document.querySelectorAll(selector);
+
+  // Проверка на системное отключение анимаций
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (prefersReducedMotion) {
+    console.log("Анимации отключены на уровне системы. Скрипт не запускается.");
+    return; // Не инициализируем анимации
   }
+
+  addAnimation(scrollers, options);
+
+  function addAnimation(scrollers, options) {
+    scrollers.forEach((scroller) => {
+      scroller.setAttribute("data-animated", true);
+
+      // Проверка наличия параметров и применение стилей
+      if (options?.speed) {
+        scroller.style.setProperty('--_animation-duration', `${options.speed}ms`);
+      }
+
+      if (options?.direction) {
+        const animationDirection = options.direction === 'right' ? 'reverse' : 'forwards';
+        scroller.style.setProperty('--_animation-direction', animationDirection);
+      }
+
+      if (options?.columnGap) {
+        scroller.querySelector(".scroller-wrapper").style.gridColumnGap = `${options.columnGap}rem`;
+        const translationValue = `calc(-50% - ${options.columnGap / 2}rem)`;
+        scroller.style.setProperty('--_translation-value', translationValue);
+      }
+
+      let duplicates = options?.duplicates > 0 ? options.duplicates : 1;
+
+      const scrollerWrapper = scroller.querySelector(".scroller-wrapper");
+      const scrollerContent = Array.from(scrollerWrapper.children);
+
+      for (let i = 0; i < duplicates; i++) {
+        scrollerContent.forEach((item) => {
+          const duplicatedItem = item.cloneNode(true);
+          duplicatedItem.setAttribute("aria-hidden", true);
+          scrollerWrapper.appendChild(duplicatedItem);
+        });
+      }
+    });
+  }
+}
