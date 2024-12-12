@@ -1,56 +1,40 @@
-function initMyScroller(selector, options) {
-  const scrollers = document.querySelectorAll(selector);
+function initMyScroller(n, t) {
+  function r(n, t) {
+    n.forEach(n => {
+      if (n.setAttribute("data-animated", !0), t && t.speed) {
+        const i = t.speed;
+        n.style.setProperty("--_animation-duration", i + "s")
+      }
+      if (t && t.direction) {
+        const i = t.direction,
+              r = i === "right" ? "reverse" : "forwards";
+        n.style.setProperty("--_animation-direction", r)
+      }
+      if (t && t.columnGap) {
+        const i = t.columnGap;
+        n.querySelector(".scroller-wrapper").style.gridColumnGap = i + "rem";
+        const r = calc(-50% - ${i / 2}rem);
+        n.style.setProperty("--_translation-value", r)
+      }
+      let i = 1;
+      t && t.duplicates && t.duplicates > 0 && (i = t.duplicates);
+      const r = n.querySelector(".scroller-wrapper"),
+            u = Array.from(r.children),
+            f = u.slice();
+      for (let n = 0; n < i; n++) f.forEach(n => {
+        const t = n.cloneNode(!0);
+        t.setAttribute("aria-hidden", !0);
+        r.appendChild(t);
 
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    addAnimation(scrollers, options);
+        if (t.tagName === "VIDEO") {
+          t.onloadeddata = function() {
+            t.play();
+          };
+        }
+      })
+    })
   }
-
-  function addAnimation(scrollers, options) {
-    scrollers.forEach((scroller) => {
-      scroller.setAttribute("data-animated", true);
-
-      // Check if the speed option is present in the parameter object
-      if (options && options.speed) {
-        const speed = options.speed;
-        scroller.style.setProperty('--_animation-duration', speed + 'ms');
-      }
-
-      // Check if the direction option is present in the parameter object
-      if (options && options.direction) {
-        const direction = options.direction;
-        const animationDirection = direction === 'right' ? 'reverse' : 'forwards';
-        scroller.style.setProperty('--_animation-direction', animationDirection);
-      }
-
-      // Check if the columnGap option is present in the parameter object
-      if (options && options.columnGap) {
-        const columnGap = options.columnGap;
-        scroller.querySelector(".scroller-wrapper").style.gridColumnGap = columnGap + 'rem';
-        const translationValue = `calc(-50% - ${columnGap / 2}rem)`;
-        scroller.style.setProperty('--_translation-value', translationValue);
-      }
-
-      // Check if the duplicates option is present in the parameter object
-      let duplicates = 1;
-      if (options && options.duplicates && options.duplicates > 0) {
-        duplicates = options.duplicates;
-      }
-
-      // Duplicate the contents of .scroller-wrapper
-      const scrollerWrapper = scroller.querySelector(".scroller-wrapper");
-      const scrollerContent = Array.from(scrollerWrapper.children);
-
-      // Create a copy of the scrollerContent array
-      const scrollerContentCopy = scrollerContent.slice();
-
-      // Add copied elements to .scroller-wrapper
-      for (let i = 0; i < duplicates; i++) {
-        scrollerContentCopy.forEach((item) => {
-          const duplicatedItem = item.cloneNode(true);
-          duplicatedItem.setAttribute("aria-hidden", true);
-          scrollerWrapper.appendChild(duplicatedItem);
-        });
-      }
-    });
-  }
+  const i = document.querySelectorAll(n);
+  //window.matchMedia("(prefers-reduced-motion: reduce)").matches || r(i, t)
+   r(i, t)
 }
